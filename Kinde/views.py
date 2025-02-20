@@ -49,9 +49,11 @@ def __get_user_context(user_id):
     return context
 
 def __get_new_kinde_client():
+    domain = os.getenv("KINDE_ISSUER_URL")
+    callback_url = f"{os.getenv('SITE_DOMAIN')}/Kinde/callback"
     return KindeApiClient(
-        domain=os.getenv("KINDE_ISSUER_URL"),
-        callback_url=os.getenv("KINDE_CALLBACK_URL"),
+        domain=domain,
+        callback_url=callback_url,
         client_id=os.getenv("KINDE_CLIENT_ID"),
         client_secret=os.getenv("KINDE_CLIENT_SECRET"),
         grant_type=GrantType.AUTHORIZATION_CODE,
@@ -111,21 +113,17 @@ def callback(request):
 
 # What gets run when you logout
 def logout(request):
-    # Get homepage URL dynamically
-    homepage_url = reverse("homepage:index")
+    from django.conf import settings
     index_path = request.build_absolute_uri('/')
     user_id = request.session.get('user_id')
     
-    request.session.flush()  # Using flush() instead of clear() to ensure complete cleanup
+    request.session.flush()
     
-     # Check if user_id exists and has an associated client
     if user_id and user_id in user_clients:
         kinde_client = user_clients[user_id].get('kinde_client')
         if kinde_client:
-            # Remove the user's client from the dictionary
             user_clients.pop(user_id)
             return redirect(kinde_client.logout(redirect_to=index_path))
     
-    # If no valid client is found, just redirect
     return redirect(index_path)
 

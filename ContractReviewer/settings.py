@@ -42,6 +42,9 @@ ALLOWED_HOSTS = [
     'localhost'
 ]
 
+SITE_DOMAIN = os.getenv('SITE_DOMAIN', 'http://127.0.0.1:8000')
+SESSION_COOKIE_SECURE = os.getenv('DJANGO_ENV') == 'production'
+
 
 # Application definition
 
@@ -142,4 +145,3 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SECURE = False
