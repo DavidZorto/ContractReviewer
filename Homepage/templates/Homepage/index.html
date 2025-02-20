@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AskCharlie - AI-Powered Contract Analysis</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'Homepage/styles.css' %}"">
+</head>
+<body>
+    <header>
+        <div class="logo">AskCharlie</div>
+        <nav>
+            <ul>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#about">About</a></li>
+            </ul>
+        </nav>
+        <div class="logo">
+            <a href="/Kinde/login">
+                <button>Sign In</button>
+            </a>
+            <a href="/Kinde/register">
+                <button class="Sign-Up">Create Account</button>
+            </a>
+        </div>
+        
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Revolutionize <br><span class="highlight">Contract Analysis</span></h1>
+                <p>Harness AI to streamline your contract review. Save time, reduce errors, gain insights.</p>
+                <form class="email-form">
+                    <input type="email" placeholder="Enter your email" required>
+                    <button type="submit">Get Started</button>
+                </form>
+            </div>
+            <div class="hero-image">
+                <div class="code-sample">
+                    <pre>
+{
+  "contract": "Service Agreement",
+  "status": "Analyzed",
+  "risks": ["Payment Terms", "Liability"],
+  "completion": 100,
+  "time_saved": "3 hours"
+}
+                    </pre>
+                </div>
+                <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot_2025-02-19_at_03.17.25-removebg-preview-wGT4fhWUBD7D3qDw43kjBQIxtPX3Mb.png" alt="Charlie from AskCharlie" class="charlie-image">
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <h2>Key Features</h2>
+            <div class="feature-cards">
+                <div class="feature-card">
+                    <div class="feature-icon yellow">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                    </div>
+                    <h3>AI-Powered Analysis</h3>
+                    <p>Leverage advanced ML algorithms for quick and accurate contract analysis.</p>
+                    <a href="#" class="learn-more">Learn More</a>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon blue">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <h3>Risk Identification</h3>
+                    <p>Automatically spot potential risks and inconsistencies within contracts.</p>
+                    <a href="#" class="learn-more">Learn More</a>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon green">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+                    </div>
+                    <h3>Custom Reports</h3>
+                    <p>Generate detailed, tailored reports that meet your specific requirements.</p>
+                    <a href="#" class="learn-more">Learn More</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="pricing" class="pricing">
+            <h2>Pricing Plans</h2>
+            <div class="pricing-cards">
+                <div class="pricing-card">
+                    <h3>Starter</h3>
+                    <div class="price">$49</div>
+                    <p>Perfect for small businesses</p>
+                    <ul>
+                        <li>50 contracts/month</li>
+                        <li>Basic AI analysis</li>
+                        <li>Email support</li>
+                    </ul>
+                    <button>Choose Plan</button>
+                </div>
+                <div class="pricing-card highlighted">
+                    <h3>Pro</h3>
+                    <div class="price">$99</div>
+                    <p>Ideal for growing companies</p>
+                    <ul>
+                        <li>250 contracts/month</li>
+                        <li>Advanced AI analysis</li>
+                        <li>Priority support</li>
+                        <li>Custom report templates</li>
+                    </ul>
+                    <button>Choose Plan</button>
+                </div>
+                <div class="pricing-card">
+                    <h3>Enterprise</h3>
+                    <div class="price">Custom</div>
+                    <p>For large organizations</p>
+                    <ul>
+                        <li>Unlimited contracts</li>
+                        <li>Full AI suite</li>
+                        <li>24/7 dedicated support</li>
+                        <li>API access</li>
+                        <li>On-premise deployment</li>
+                    </ul>
+                    <button>Choose Plan</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="about">
+            <h2>About AskCharlie</h2>
+            <p class="about-description">
+                AskCharlie is at the forefront of AI-powered contract analysis. Our mission is to simplify and streamline
+                the contract review process, helping businesses of all sizes make informed decisions faster and with greater
+                confidence.
+            </p>
+            <div class="about-cards">
+                <div class="about-card">
+                    <h3>Our Vision</h3>
+                    <p>To revolutionize contract management through cutting-edge AI technology.</p>
+                </div>
+                <div class="about-card">
+                    <h3>Our Team</h3>
+                    <p>A diverse group of AI experts, legal professionals, and software engineers.</p>
+                </div>
+                <div class="about-card">
+                    <h3>Our Impact</h3>
+                    <p>Helping thousands of businesses save time and reduce risk in contract analysis.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">AskCharlie</div>
+            <nav class="footer-nav">
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">Careers</a></li>
+                </ul>
+            </nav>
+        </div>
+    </footer>
+</body>
+</html>
+

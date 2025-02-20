@@ -58,7 +58,7 @@ def index(request):
         user_id = request.session.get('user_id')
         context = __get_user_context(user_id)
 
-    return render(request, "Kinde/index.html", context)
+    return render(request, "Homepage/index.html", context)
 
 # What gets run when you sign in
 def login(request):
@@ -82,7 +82,7 @@ def register(request):
     else:
         user_id = request.session.get('user_id')
         context = __get_user_context(user_id)
-        return render(request, "Kinde/index.html", context)
+        return render(request, "Homepage/index.html", context)
 
 # When your user is done authenticating in Kinde
 # Kinde calls this route back
@@ -104,13 +104,13 @@ def callback(request):
             "user_last_name": user_details['family_name'],
         }
 
-        return redirect("index")
+        return redirect("index.html")
 
     else:
         user_id = request.session.get('user_id')
         context = __get_user_context(user_id)
 
-    return render(request, "Kinde/index.html", context)
+    return render(request, "Homepage/index.html", context)
 
 # What gets run when you logout
 def logout(request):
@@ -121,3 +121,4 @@ def logout(request):
     user_clients[user_id] = None
 
     return redirect(kinde_client.logout(redirect_to=index_path))
+
