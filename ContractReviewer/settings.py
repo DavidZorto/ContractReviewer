@@ -15,7 +15,6 @@ from pathlib import Path
 import os
 
 
-ssl._create_default_https_context = ssl._create_unverified_context
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
