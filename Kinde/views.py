@@ -1,9 +1,16 @@
 from django.shortcuts import render, redirect, HttpResponse
-
+from django.urls import reverse
 # Import the Kinde SDK, dotenv and a few std lib modules
 import os, base64
 from kinde_sdk.kinde_api_client import GrantType, KindeApiClient
 from dotenv import load_dotenv
+
+import ssl
+import requests
+
+# Disable SSL verification globally (TEMPORARY)
+ssl._create_default_https_context = ssl._create_unverified_context
+
 
 # Call load_dotenv so we can access values from the .env file
 load_dotenv()
@@ -50,49 +57,39 @@ def __get_new_kinde_client():
         grant_type=GrantType.AUTHORIZATION_CODE,
     )
 
-# The main page!
-def index(request):
-    context = __get_empty_context()
-
-    if request.session.get('user_id') is not None:
-        user_id = request.session.get('user_id')
-        context = __get_user_context(user_id)
-
-    return render(request, "Homepage/index.html", context)
 
 # What gets run when you sign in
 def login(request):
     context = __get_empty_context()
 
-    # Check if there's a session for this user
+    # Check if User is not signed in
     if request.session.get('user_id') is None:
         kinde_client = __get_new_kinde_client()
         return redirect(kinde_client.get_login_url())
     else:
         user_id = request.session.get('user_id')
         context = __get_user_context(user_id)
-        return render(request, "Kinde/index.html", context)
+        return render(request, "Kinde/dashboard.html", context)
 
 # What gets run when you register
 def register(request):
-    # Check if there's a session for this user
+    # Check if User is not signed in
     if request.session.get('user_id') is None:
         kinde_client = __get_new_kinde_client()
         return redirect(kinde_client.get_register_url())
     else:
         user_id = request.session.get('user_id')
         context = __get_user_context(user_id)
-        return render(request, "Homepage/index.html", context)
+        return render(request, "kinde/dashboard.html", context)
 
 # When your user is done authenticating in Kinde
 # Kinde calls this route back
 def callback(request):
     context = __get_empty_context()
-
+    #Check If the User Is Already Logged In
     if request.session.get('user_id') is None:
 
         kinde_client = __get_new_kinde_client()
-
         kinde_client.fetch_token(authorization_response=request.build_absolute_uri())
         user_details = kinde_client.get_user_details()
         user_id = user_details['id']
@@ -104,21 +101,31 @@ def callback(request):
             "user_last_name": user_details['family_name'],
         }
 
-        return redirect("index.html")
+        return redirect('/Dashboard/')
 
     else:
         user_id = request.session.get('user_id')
         context = __get_user_context(user_id)
 
-    return render(request, "Homepage/index.html", context)
+    return redirect('Dashboard:index')
 
 # What gets run when you logout
 def logout(request):
-    index_path = request.build_absolute_uri('/Kinde/')
+    # Get homepage URL dynamically
+    homepage_url = reverse("homepage:index")
+    index_path = request.build_absolute_uri('/')
     user_id = request.session.get('user_id')
-    kinde_client = user_clients.get(user_id).get('kinde_client')
-    request.session.clear()
-    user_clients[user_id] = None
-
-    return redirect(kinde_client.logout(redirect_to=index_path))
+    
+    request.session.flush()  # Using flush() instead of clear() to ensure complete cleanup
+    
+     # Check if user_id exists and has an associated client
+    if user_id and user_id in user_clients:
+        kinde_client = user_clients[user_id].get('kinde_client')
+        if kinde_client:
+            # Remove the user's client from the dictionary
+            user_clients.pop(user_id)
+            return redirect(kinde_client.logout(redirect_to=index_path))
+    
+    # If no valid client is found, just redirect
+    return redirect(index_path)
 
