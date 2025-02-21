@@ -8,6 +8,13 @@ from dotenv import load_dotenv
 import ssl
 import requests
 
+from django.contrib.auth import get_user_model
+from django.contrib.auth import login
+
+User = get_user_model()
+
+
+
 # Disable SSL verification globally (TEMPORARY)
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -87,6 +94,7 @@ def register(request):
 # When your user is done authenticating in Kinde
 # Kinde calls this route back
 def callback(request):
+
     context = __get_empty_context()
     #Check If the User Is Already Logged In
     if request.session.get('user_id') is None:
@@ -94,14 +102,27 @@ def callback(request):
         kinde_client = __get_new_kinde_client()
         kinde_client.fetch_token(authorization_response=request.build_absolute_uri())
         user_details = kinde_client.get_user_details()
+        
         user_id = user_details['id']
+        email = user_details.get('email', '')
+
+
         request.session['user_id'] = user_id
+
         user_clients[user_id] = {
             "kinde_client": kinde_client,
             "authenticated": True,
-            "user_first_name": user_details['given_name'],
-            "user_last_name": user_details['family_name'],
+            "user_first_name": user_details.get('given_name', ''),  # ✅ Avoid KeyError
+            "user_last_name": user_details.get('family_name', ''),  # ✅ Avoid KeyError
         }
+
+        # Get or create user
+        user, created = User.objects.get_or_create(
+            email=email,  # Assuming email is unique
+            defaults={'username': email}  # Set default username as email
+        )
+        
+        login(request, user)
 
         return redirect('/Dashboard/')
 

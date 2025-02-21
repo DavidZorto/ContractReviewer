@@ -12,6 +12,11 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url  # Allows easy database URL handling
+from dotenv import load_dotenv
+
+load_dotenv()  # Load environment variables from .env
+
 
 
 
@@ -95,11 +100,16 @@ WSGI_APPLICATION = 'ContractReviewer.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+database_url = os.getenv('DATABASE_URL')
+print(f"Connecting to database: {database_url.split('@')[1] if '@' in database_url else 'local'}")
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+
+    'default': dj_database_url.config(
+        default= 'DATABASE_URL',  # Use your existing DATABASE_URL
+        conn_max_age=600,
+    )
+
 }
 
 
@@ -145,3 +155,5 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SESSION_COOKIE_HTTPONLY = True
+
+AUTH_USER_MODEL = 'Kinde.CustomUser'

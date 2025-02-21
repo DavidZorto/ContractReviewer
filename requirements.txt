@@ -1,5 +1,6 @@
 gunicorn
 whitenoise
+dj-database-url
 Django==5.1.6
 kinde_python_sdk==1.2.6
 python-dotenv==1.0.1
