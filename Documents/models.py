@@ -16,6 +16,7 @@ def document_upload_path(instance, filename):
 
 class Document(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)  # 🔥 Allow NULL temporarily
     briefcase = models.ForeignKey(Briefcase, on_delete=models.CASCADE, related_name="documents")
     file = models.FileField(upload_to=document_upload_path)
     filename = models.CharField(max_length=255)

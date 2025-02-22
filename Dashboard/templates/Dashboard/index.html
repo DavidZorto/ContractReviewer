@@ -7,6 +7,14 @@
   <link rel="stylesheet" href="">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
+  <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+  <style>
+    /* Highlight style for focused button */
+    .active-button {
+        background-color: #E4E7EB; /* Change to your desired highlight color */
+        color: white; /* Change text color if needed */
+    }
+</style>
 
 </head>
 <body>
@@ -716,7 +724,7 @@
             >
               <li>
                 <a
-                  href="#"
+                  href="/Kinde/logout"
                   class="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                   >Sign out</a
                 >
@@ -993,16 +1001,24 @@
             </ul>
           </li>
         </ul>  --> 
+
+        
         <ul class="space-y-2">
           <li>
-            <a href="/Dashboard/" class="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-              <span class="ml-3"> 🏠 Dashboard</span>
-            </a>
+            <button 
+                hx-get="{% url 'Dashboard:dashboard_home' %}" 
+                hx-target="#content" 
+                hx-swap="innerHTML"
+                hx-indicator="#loading-indicator"
+                onclick="highlightButton(this)"
+                class="flex items-center w-full p-2 pr-11 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+              <span class="ml-3">🏠 Dashboard</span>
+          </button>
           </li>
           <li>
             <button type="button" class="flex items-center p-2 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-documents" data-collapse-toggle="dropdown-documents">
               
-              <span class="flex-1 ml-3 text-left whitespace-nowrap">💼 Breifcase</span>
+              <span class="flex-1 ml-3 text-left whitespace-nowrap">💼 Briefcase</span>
               <svg
                 aria-hidden="true"
                 class="w-6 h-6"
@@ -1018,22 +1034,45 @@
               </svg>
             </button>
             <ul id="dropdown-documents" class="hidden py-2 space-y-2">
-              <li><a href="/documents/upload/" class="block p-2 pl-11 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">All Briefcases
+              <li><button 
+                      hx-get="{% url 'Dashboard:briefcases' %}" 
+                      hx-target="#content" 
+                      hx-swap="innerHTML"
+                      onclick="highlightButton(this)"
+                      class="block w-full p-2 pr-11 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700">
+                      All Briefcases
           
-              </a></li>
-              <li><a href="/documents/" class="block p-2 pl-11 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">All Documents</a></li>
+              </button></li>
+              <li><button 
+                      hx-get="{% url 'Dashboard:documents' %}" 
+                      hx-target="#content" 
+                      hx-swap="innerHTML"
+                      onclick="highlightButton(this)"
+                      class="block w-full p-2 pr-11 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700">
+                      All Documents</button></li>
             </ul>
           </li>
           <li>
-            <a href="/processing-jobs/" class="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+            <button 
+                hx-get="{% url 'Dashboard:processing_jobs' %}" 
+                hx-target="#content" 
+                hx-swap="innerHTML"
+                onclick="highlightButton(this)"
+                class="flex items-center w-full p-2 pr-11 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
               <span class="ml-3">⏳ Processing</span>
-            </a>
+          </button>
           </li>
           <li>
-            <a href="/Answers/" class="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+            <button 
+                hx-get="{% url 'Dashboard:answers' %}" 
+                hx-target="#content" 
+                hx-swap="innerHTML"
+                onclick="highlightButton(this)"
+                class="flex items-center w-full p-2 pr-11 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
               <span class="ml-3">📝 Answers</span>
-            </a>
+          </button>
           </li>
+  
      
           <li>
             <button type="button" class="flex items-center p-2 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-subscription" data-collapse-toggle="dropdown-subscription">
@@ -1296,56 +1335,43 @@
       </div>
     </aside>
 
-    <main class="p-4 md:ml-64 h-auto pt-20">
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-        <div
-          class="border-2 border-dashed border-gray-300 rounded-lg dark:border-gray-600 h-32 md:h-64"
-        ></div>
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-32 md:h-64"
-        ></div>
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-32 md:h-64"
-        ></div>
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-32 md:h-64"
-        ></div>
-      </div>
-      <div
-        class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-96 mb-4"
-      ></div>
-      <div class="grid grid-cols-2 gap-4 mb-4">
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
-      </div>
-      <div
-        class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-96 mb-4"
-      ></div>
-      <div class="grid grid-cols-2 gap-4">
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
-      </div>
+    <main id="content" class="p-4 md:ml-64 h-auto pt-20">
+      
+      {% include 'dashboard/home.html' %}
+      
     </main>
-  </div>
+      </div>
+          <!-- Loading Bar -->
+          <div id="loading-bar" style="display: none; position: fixed; bottom: 0; left: 0; width: 100%; height: 4px; background-color: #4caf50; transition: width 0.4s;">
+          <div id="loading-progress" style="width: 0%; height: 100%; background-color: #76ff03;"></div>
+        </div>
+      </div>
+
+     <script>
+         // Function to highlight the selected button
+          function highlightButton(selectedButton) {
+              // Remove 'active-button' class from all buttons
+              const buttons = document.querySelectorAll('button');
+              buttons.forEach(button => {
+                  button.classList.remove('active-button');
+              });
+
+              // Add 'active-button' class to the selected button
+              selectedButton.classList.add('active-button');
+          }
+        // HTMX event listeners to control the loading bar
+        document.body.addEventListener('htmx:configRequest', function() {
+            document.getElementById('loading-bar').style.display = 'block';
+            document.getElementById('loading-progress').style.width = '3%'; // Reset progress
+        });
+
+        document.body.addEventListener('htmx:beforeRequest', function() {
+            document.getElementById('loading-progress').style.width = '100%'; // Start loading
+        });
+
+        document.body.addEventListener('htmx:afterSwap', function() {
+            document.getElementById('loading-bar').style.display = 'none'; // Hide loading bar
+        });
+    </script>
 </body>
 </html>
