@@ -1,9 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from kinde_sdk.kinde_api_client import GrantType, KindeApiClient # Import Kinde's authentication checker
-from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from Documents.models import Briefcase, Document, Question, ProcessingJob, AnswerSet
-from django.core.paginator import Paginator
+from django.contrib import messages
+from Documents.forms import BriefcaseForm, DocumentForm, QuestionForm, ProcessingJobForm, AnswerSetForm  # Assuming you have forms for each model
 
 
 
@@ -27,19 +27,69 @@ def Answers(request):
     return render_template(request, 'Dashboard/answers.html', 'Homepage/index.html')  # Main section for Answers
 
 
-@login_required  # 🔐 Protect this view so only logged-in users can access it
+
+# Briefcase CRUD
+@login_required  #  Protect this view so only logged-in users can access it
 def Briefcases(request):
-    page_number = request.GET.get("page", 1)  # Get page number from request
-    briefcases_list = Briefcase.objects.filter(user=request.user).order_by("-created_at")  # Only user's briefcases
-    paginator = Paginator(briefcases_list, 10000)  # Show 5 briefcases per page
-
-    briefcases = paginator.get_page(page_number)
-
-    # If HTMX request, return only the list items (partial)
-    if request.htmx:
-        return render(request, "Dashboard/briefcases.html", {"briefcases": briefcases})
-
+    briefcases = Briefcase.objects.filter(user=request.user) 
     return render(request, "Dashboard/briefcases.html", {"briefcases": briefcases})
+
+
+@login_required
+def create_briefcase(request):
+    if request.method == 'POST':
+        form = BriefcaseForm(request.POST)
+        if form.is_valid():
+            briefcase = form.save(commit=False)
+            briefcase.user = request.user  # Associate with the logged-in user
+            briefcase.save()
+            messages.success(request, "Briefcase created successfully.")
+            return redirect('Dashboard:briefcases')
+    else:
+        form = BriefcaseForm()
+    return render(request, 'Dashboard/briefcase_form.html', {'form': form})
+
+@login_required
+def read_briefcase(request, briefcase_id):
+    briefcase = get_object_or_404(Briefcase, id=briefcase_id, user=request.user)
+    return render(request, 'Dashboard/briefcase_detail.html', {'briefcase': briefcase})
+
+@login_required
+def update_briefcase(request, briefcase_id):
+    briefcase = get_object_or_404(Briefcase, id=briefcase_id, user=request.user)
+    if request.method == 'POST':
+        form = BriefcaseForm(request.POST, instance=briefcase)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Briefcase updated successfully.")
+            return redirect('Dashboard:briefcases')
+    else:
+        form = BriefcaseForm(instance=briefcase)
+    return render(request, 'Dashboard/briefcase_form.html', {'form': form})
+
+
+@login_required
+def delete_briefcase(request, briefcase_id):
+    briefcase = get_object_or_404(Briefcase, id=briefcase_id, user=request.user)
+    briefcase.delete()
+    messages.success(request, "Briefcase deleted successfully.")
+    return redirect('Dashboard:briefcases')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @login_required  # 🔐 Require login to access documents
 def Documents(request):
