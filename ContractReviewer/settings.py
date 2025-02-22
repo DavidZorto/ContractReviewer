@@ -14,6 +14,10 @@ from pathlib import Path
 import os
 import dj_database_url  # Allows easy database URL handling
 from dotenv import load_dotenv
+import boto3
+from django.conf import settings
+from django.core.files.storage import default_storage
+from storages.backends.s3boto3 import S3Boto3Storage
 
 load_dotenv()  # Load environment variables from .env
 
@@ -63,6 +67,9 @@ INSTALLED_APPS = [
     'Kinde',
     'Homepage',
     'Dashboard',
+    'Documents',
+    'storages',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -157,3 +164,74 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 SESSION_COOKIE_HTTPONLY = True
 
 AUTH_USER_MODEL = 'Kinde.CustomUser'
+
+
+# Cloudflare R2 Credentials
+R2_ACCESS_KEY_ID = os.getenv('R2_ACCESS_KEY_ID')
+R2_SECRET_ACCESS_KEY = os.getenv('R2_SECRET_ACCESS_KEY')
+R2_BUCKET_NAME = os.getenv('R2_BUCKET_NAME')
+R2_ENDPOINT_URL = os.getenv('R2_ENDPOINT_URL')  # Example: https://YOUR_ACCOUNT_ID.r2.cloudflarestorage.com
+R2_REGION = os.getenv("R2_REGION", "auto") 
+R2_FILE_STORAGE = os.getenv("R2_FILE_STORAGE", "auto")
+# Storage Configuration
+DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+AWS_S3_ENDPOINT_URL = R2_ENDPOINT_URL  # Use Cloudflare R2 URL
+AWS_ACCESS_KEY_ID = R2_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY = R2_SECRET_ACCESS_KEY
+AWS_S3_REGION_NAME = R2_REGION 
+AWS_STORAGE_BUCKET_NAME = R2_BUCKET_NAME
+AWS_S3_ADDRESSING_STYLE = "virtual"  # Required for Cloudflare R2
+AWS_QUERYSTRING_AUTH = False  # Disable query string auth for public access
+AWS_S3_CUSTOM_DOMAIN = f"{R2_BUCKET_NAME}.{R2_ENDPOINT_URL.replace('https://', '')}"
+
+# Additional S3Boto3 Settings for R2
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = None
+AWS_S3_USE_SSL = True
+AWS_S3_VERIFY = True
+
+AWS_S3_CONFIG = {
+    'addressing_style': 'virtual',
+    'signature_version': 's3v4',
+}
+
+print("Storage Configuration:")
+
+print(f"AWS_S3_ENDPOINT_URL: {AWS_S3_ENDPOINT_URL}")
+print(f"AWS_ACCESS_KEY_ID set: {'Yes' if AWS_ACCESS_KEY_ID else 'No'}")
+print(f"AWS_SECRET_ACCESS_KEY set: {'Yes' if AWS_SECRET_ACCESS_KEY else 'No'}")
+print(f"AWS_STORAGE_BUCKET_NAME: {AWS_STORAGE_BUCKET_NAME}")
+
+# Add this to your existing settings
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        'file': {
+            'class': 'logging.FileHandler',
+            'filename': 'debug.log',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'Documents.storage': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+# Ensure default_storage is properly set
+default_storage._wrapped = S3Boto3Storage()
+print(f"DEFAULT_FILE_STORAGE: {DEFAULT_FILE_STORAGE}")
+

@@ -9,7 +9,7 @@ import ssl
 import requests
 
 from django.contrib.auth import get_user_model
-from django.contrib.auth import login
+from django.contrib.auth import login as auth_login
 
 User = get_user_model()
 
@@ -122,9 +122,9 @@ def callback(request):
             defaults={'username': email}  # Set default username as email
         )
         
-        login(request, user)
+        auth_login(request, user)
 
-        return redirect('/Dashboard/')
+        return redirect('Dashboard:index')
 
     else:
         user_id = request.session.get('user_id')
