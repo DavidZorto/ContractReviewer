@@ -10,3 +10,4 @@ boto3
 djangorestframework
 django-cors-headers
 requests
+django_htmx
