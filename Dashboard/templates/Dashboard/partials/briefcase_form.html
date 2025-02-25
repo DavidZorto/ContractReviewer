@@ -1,0 +1,52 @@
+<!-- Modal Container -->
+<div id="briefcase-modal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 backdrop-blur-sm z-50">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-[400px] p-6 relative">
+        
+        <!-- Close Button -->
+        <button onclick="closeModal()" class="absolute top-3 right-3 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
+            &times;
+        </button>
+
+        <!-- Modal Title -->
+        <h2 class="text-xl font-semibold text-gray-800 dark:text-white text-center">Create New Briefcase</h2>
+
+        <!-- Form -->
+        <form 
+            hx-post="{% url 'Dashboard:create_briefcase' %}" 
+            hx-target="#content" 
+            hx-swap="innerHTML"
+            hx-on:after-request="closeModal();"
+            class="mt-4">
+
+            {% csrf_token %}
+
+            <!-- Input Field -->
+            <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Briefcase Title</label>
+            <input 
+                type="text" 
+                name="title" 
+                id="title" 
+                required
+                class="mt-2 block w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 outline-none" 
+                placeholder="Enter briefcase name" />
+
+            <!-- Buttons -->
+            <div class="mt-4 flex justify-between">
+                <button 
+                    type="button" 
+                    onclick="closeModal()"
+                    class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-white rounded-lg hover:bg-gray-400 dark:hover:bg-gray-700 transition">
+                    Cancel
+                </button>
+
+                <button 
+                    type="submit"
+                    class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                    Save Briefcase
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- JavaScript for Closing Modal -->

@@ -4,8 +4,9 @@ from django.contrib.auth.decorators import login_required
 from Documents.models import Briefcase, Document, Question, ProcessingJob, AnswerSet
 from django.contrib import messages
 from Documents.forms import BriefcaseForm, DocumentForm, QuestionForm, ProcessingJobForm, AnswerSetForm  # Assuming you have forms for each model
-
-
+import uuid
+from django.http import HttpResponse
+from django.template.loader import render_to_string
 
 # Create your views here.
 def render_template(request, authenticated_template, unauthenticated_template):
@@ -31,7 +32,7 @@ def Answers(request):
 # Briefcase CRUD
 @login_required  #  Protect this view so only logged-in users can access it
 def Briefcases(request):
-    briefcases = Briefcase.objects.filter(user=request.user) 
+    briefcases = Briefcase.objects.filter(user=request.user).order_by("-created_at") 
     return render(request, "Dashboard/briefcases.html", {"briefcases": briefcases})
 
 
@@ -41,13 +42,25 @@ def create_briefcase(request):
         form = BriefcaseForm(request.POST)
         if form.is_valid():
             briefcase = form.save(commit=False)
-            briefcase.user = request.user  # Associate with the logged-in user
+            briefcase.user = request.user  # Associate with logged-in user
             briefcase.save()
             messages.success(request, "Briefcase created successfully.")
-            return redirect('Dashboard:briefcases')
+
+            # If HTMX is making the request, return only the updated list
+            if 'HX-Request' in request.headers:
+                briefcases = Briefcase.objects.filter(user=request.user)
+                updated_briefcases_html = render_to_string('Dashboard/briefcases.html', {'briefcases': briefcases}, request)
+                return HttpResponse(updated_briefcases_html)
+
+            return redirect('Dashboard:briefcases')  # Fallback for non-HTMX users
+
     else:
         form = BriefcaseForm()
-    return render(request, 'Dashboard/briefcase_form.html', {'form': form})
+
+    # Render only the form for HTMX
+    form_html = render_to_string('Dashboard/partials/briefcase_form.html', {'form': form}, request)
+    return HttpResponse(form_html)
+
 
 @login_required
 def read_briefcase(request, briefcase_id):
@@ -69,8 +82,8 @@ def update_briefcase(request, briefcase_id):
 
 
 @login_required
-def delete_briefcase(request, briefcase_id):
-    briefcase = get_object_or_404(Briefcase, id=briefcase_id, user=request.user)
+def delete_briefcase(request, id):
+    briefcase = get_object_or_404(Briefcase, id=id, user=request.user)
     briefcase.delete()
     messages.success(request, "Briefcase deleted successfully.")
     return redirect('Dashboard:briefcases')
