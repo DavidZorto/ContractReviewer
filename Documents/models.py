@@ -11,8 +11,8 @@ class Briefcase(models.Model):
     def __str__(self):
         return self.title
     
-def document_upload_path(instance, filename):
-    return f"documents/{instance.briefcase.user.id}/{instance.briefcase.id}/{filename}"
+    def document_upload_path(instance, filename):
+        return f"documents/{instance.briefcase.user.id}/{instance.briefcase.id}/{filename}"
 
 class Document(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
